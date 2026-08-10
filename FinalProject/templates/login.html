@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistem Pengadaan Dokumentasi Multimedia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Multimedia Team UNIDA Gontor" class="logo-mark-img">
+      <h2>UPT Multimedia &amp; Public Relation</h2>
+      <p class="tag">Sistem Pengadaan Dokumentasi Multimedia</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-group" style="text-align:left;">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="admin" required>
+        </div>
+        <div class="form-group" style="text-align:left;">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%;">Masuk</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

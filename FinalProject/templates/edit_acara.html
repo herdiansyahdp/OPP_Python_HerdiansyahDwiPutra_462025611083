@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Edit Acara{% endblock %}
+{% block content %}
+  <h1>Edit Acara</h1>
+  <p class="subtitle">Perbarui data acara <strong>{{ acara.nama_acara }}</strong> jika ada perubahan jadwal atau layanan.</p>
+
+  {% set layanan_terpilih = acara.layanan_list | map(attribute='nama_layanan') | list %}
+
+  <div class="card">
+    <form method="POST" action="{{ url_for('edit_acara', id_acara=acara.id_acara) }}">
+      <div class="form-group">
+        <label for="nama_acara">Nama Acara</label>
+        <input type="text" id="nama_acara" name="nama_acara" value="{{ acara.nama_acara }}" required>
+      </div>
+
+      {% set tgl_parts = acara.tanggal.split('-') %}
+      {% set tahun_lama = tgl_parts[0] | int %}
+      {% set bulan_lama = tgl_parts[1] | int %}
+      {% set hari_lama = tgl_parts[2] | int %}
+      {% set waktu_parts = acara.waktu.split(':') %}
+      {% set jam_lama = waktu_parts[0] | int %}
+      {% set menit_lama = waktu_parts[1] | int %}
+
+      <div class="form-group" style="display:flex; gap:16px;">
+        <div style="flex:1;">
+          <label>Tanggal Lengkap</label>
+          <div class="dt-group">
+            <select name="tgl_hari" required>
+              {% for h in range(1, 32) %}
+                <option value="{{ h }}" {% if h == hari_lama %}selected{% endif %}>{{ '%02d' % h }}</option>
+              {% endfor %}
+            </select>
+            <select name="tgl_bulan" required>
+              {% set nama_bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] %}
+              {% for b in range(1, 13) %}
+                <option value="{{ b }}" {% if b == bulan_lama %}selected{% endif %}>{{ nama_bulan[b-1] }}</option>
+              {% endfor %}
+            </select>
+            <select name="tgl_tahun" required>
+              {% for t in range(2024, 2031) %}
+                <option value="{{ t }}" {% if t == tahun_lama %}selected{% endif %}>{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dt-hint">Format: dd / mm / yyyy</div>
+        </div>
+        <div style="flex:1;">
+          <label>Waktu</label>
+          <div class="dt-group">
+            <select name="waktu_jam" required>
+              {% for j in range(0, 24) %}
+                <option value="{{ j }}" {% if j == jam_lama %}selected{% endif %}>{{ '%02d' % j }}</option>
+              {% endfor %}
+            </select>
+            <select name="waktu_menit" required>
+              {% for m in range(0, 60) %}
+                <option value="{{ m }}" {% if m == menit_lama %}selected{% endif %}>{{ '%02d' % m }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dt-hint">Format 24 jam (00:00 - 23:59)</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Jenis Layanan (bisa pilih lebih dari satu)</label>
+        <div class="checkbox-group">
+          {% for jenis in jenis_layanan_tersedia %}
+            <label class="checkbox-pill">
+              <input type="checkbox" class="layanan-checkbox" name="jenis_layanan" value="{{ jenis }}"
+                     {% if jenis in layanan_terpilih %}checked{% endif %}>
+              {{ jenis }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% for jenis in jenis_layanan_tersedia %}
+        {% set layanan_obj = acara.layanan_list | selectattr('nama_layanan', 'equalto', jenis) | first %}
+        <div class="layanan-detail-box" id="detail-{{ jenis }}">
+          <strong>Detail Layanan {{ jenis }}</strong>
+          <div class="form-group" style="margin-top:10px;">
+            <label for="petugas_{{ jenis }}">Petugas yang Bertugas (pisahkan dengan koma)</label>
+            <input type="text" id="petugas_{{ jenis }}" name="petugas_{{ jenis }}"
+                   value="{{ layanan_obj.petugas | join(', ') if layanan_obj else '' }}">
+          </div>
+          <div class="form-group">
+            <label for="alat_{{ jenis }}">Alat yang Digunakan (pisahkan dengan koma)</label>
+            <input type="text" id="alat_{{ jenis }}" name="alat_{{ jenis }}"
+                   value="{{ layanan_obj.alat | join(', ') if layanan_obj else '' }}">
+          </div>
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-gold">💾 Simpan Perubahan</button>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Batal</a>
+    </form>
+  </div>
+{% endblock %}

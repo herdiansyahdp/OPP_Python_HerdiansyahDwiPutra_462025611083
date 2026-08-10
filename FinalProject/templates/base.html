@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sistem Pengadaan Dokumentasi Multimedia{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-logo-wrap">
+          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Multimedia Team UNIDA Gontor" class="brand-logo">
+        </span>
+        <span class="brand-text">
+          UPT Multimedia &amp; Public Relation
+          <small>Sistem Pengadaan Dokumentasi</small>
+        </span>
+      </div>
+      <nav>
+        <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Menu Utama</a>
+        <a href="{{ url_for('tambah_acara') }}" class="{% if request.endpoint in ['tambah_acara','edit_acara'] %}active{% endif %}">Tambah Acara</a>
+        <a href="{{ url_for('database_anggota') }}" class="{% if request.endpoint == 'database_anggota' %}active{% endif %}">Database Anggota</a>
+        <a href="{{ url_for('riwayat') }}" class="{% if request.endpoint == 'riwayat' %}active{% endif %}">Riwayat &amp; Statistik</a>
+      </nav>
+      <div class="logout">
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

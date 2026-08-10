@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Database Anggota{% endblock %}
+{% block content %}
+  <h1>Database Anggota UPT</h1>
+  <p class="subtitle">Pantau anggota mana yang masih kosong, sedang bertugas, dan akan bertugas.</p>
+
+  <div class="card" style="margin-bottom:24px;">
+    <strong style="color:var(--navy);">Tambah Anggota Baru</strong>
+    <form method="POST" action="{{ url_for('tambah_anggota') }}" style="display:flex; gap:12px; align-items:flex-end; margin-top:12px; flex-wrap:wrap;">
+      <div class="form-group" style="margin-bottom:0; flex:1; min-width:180px;">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" name="nama" placeholder="Nama anggota" required>
+      </div>
+      <div class="form-group" style="margin-bottom:0; flex:1; min-width:180px;">
+        <label for="divisi">Divisi</label>
+        <select id="divisi" name="divisi" required>
+          <option value="Fotografi">Fotografi</option>
+          <option value="Videografi">Videografi</option>
+          <option value="Broadcast">Broadcast</option>
+          <option value="Drone">Drone</option>
+          <option value="LED">LED</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-gold">Tambah</button>
+    </form>
+  </div>
+
+  <div class="status-columns">
+    <div class="status-col kosong">
+      <h3>🟢 Kosong ({{ kelompok['Kosong']|length }})</h3>
+      {% for a in kelompok['Kosong'] %}
+        <div class="anggota-item">
+          <strong>{{ a.nama }}</strong>
+          <div class="divisi">{{ a.divisi }}</div>
+          <div style="display:flex; gap:6px; margin-top:6px; align-items:center;">
+            <form method="POST" action="{{ url_for('ubah_status_anggota', id_anggota=a.id_anggota) }}">
+              <select name="status" onchange="this.form.submit()" style="font-size:0.78rem; padding:4px 6px;">
+                <option value="Kosong" selected>Kosong</option>
+                <option value="Bertugas">Bertugas</option>
+                <option value="Akan Bertugas">Akan Bertugas</option>
+              </select>
+            </form>
+            <form method="POST" action="{{ url_for('hapus_anggota', id_anggota=a.id_anggota) }}"
+                  onsubmit="return confirm('Yakin ingin menghapus anggota \'{{ a.nama }}\'?');">
+              <button type="submit" class="btn btn-danger btn-sm" title="Hapus anggota">🗑️</button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <p style="color:#999; font-size:0.85rem;">Tidak ada anggota.</p>
+      {% endfor %}
+    </div>
+
+    <div class="status-col bertugas">
+      <h3>🔴 Bertugas ({{ kelompok['Bertugas']|length }})</h3>
+      {% for a in kelompok['Bertugas'] %}
+        <div class="anggota-item">
+          <strong>{{ a.nama }}</strong>
+          <div class="divisi">{{ a.divisi }}</div>
+          <div style="display:flex; gap:6px; margin-top:6px; align-items:center;">
+            <form method="POST" action="{{ url_for('ubah_status_anggota', id_anggota=a.id_anggota) }}">
+              <select name="status" onchange="this.form.submit()" style="font-size:0.78rem; padding:4px 6px;">
+                <option value="Kosong">Kosong</option>
+                <option value="Bertugas" selected>Bertugas</option>
+                <option value="Akan Bertugas">Akan Bertugas</option>
+              </select>
+            </form>
+            <form method="POST" action="{{ url_for('hapus_anggota', id_anggota=a.id_anggota) }}"
+                  onsubmit="return confirm('Yakin ingin menghapus anggota \'{{ a.nama }}\'?');">
+              <button type="submit" class="btn btn-danger btn-sm" title="Hapus anggota">🗑️</button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <p style="color:#999; font-size:0.85rem;">Tidak ada anggota.</p>
+      {% endfor %}
+    </div>
+
+    <div class="status-col akan">
+      <h3>🟡 Akan Bertugas ({{ kelompok['Akan Bertugas']|length }})</h3>
+      {% for a in kelompok['Akan Bertugas'] %}
+        <div class="anggota-item">
+          <strong>{{ a.nama }}</strong>
+          <div class="divisi">{{ a.divisi }}</div>
+          <div style="display:flex; gap:6px; margin-top:6px; align-items:center;">
+            <form method="POST" action="{{ url_for('ubah_status_anggota', id_anggota=a.id_anggota) }}">
+              <select name="status" onchange="this.form.submit()" style="font-size:0.78rem; padding:4px 6px;">
+                <option value="Kosong">Kosong</option>
+                <option value="Bertugas">Bertugas</option>
+                <option value="Akan Bertugas" selected>Akan Bertugas</option>
+              </select>
+            </form>
+            <form method="POST" action="{{ url_for('hapus_anggota', id_anggota=a.id_anggota) }}"
+                  onsubmit="return confirm('Yakin ingin menghapus anggota \'{{ a.nama }}\'?');">
+              <button type="submit" class="btn btn-danger btn-sm" title="Hapus anggota">🗑️</button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <p style="color:#999; font-size:0.85rem;">Tidak ada anggota.</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

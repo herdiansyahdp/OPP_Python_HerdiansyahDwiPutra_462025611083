@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Riwayat & Statistik{% endblock %}
+{% block content %}
+  <h1>Riwayat &amp; Statistik</h1>
+  <p class="subtitle">Rekap seluruh acara yang pernah terdata. Klik salah satu baris untuk melihat detail lengkap.</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nama Acara</th>
+          <th>Tanggal</th>
+          <th>Waktu</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for acara in semua %}
+          <tr class="acara-row" data-target="detail-{{ acara.id_acara }}">
+            <td>{{ acara.id_acara }}</td>
+            <td>{{ acara.nama_acara }}</td>
+            <td>{{ acara.tanggal }}</td>
+            <td>{{ acara.waktu }}</td>
+          </tr>
+          <tr class="detail-row" id="detail-{{ acara.id_acara }}">
+            <td colspan="4">
+              <div class="detail-block">
+                <strong>ID Acara:</strong> {{ acara.id_acara }}
+              </div>
+              <div class="detail-block">
+                <strong>Nama Acara:</strong> {{ acara.nama_acara }}
+              </div>
+              <div class="detail-block">
+                <strong>Tanggal:</strong> {{ acara.tanggal }} &nbsp;·&nbsp; <strong>Waktu:</strong> {{ acara.waktu }}
+              </div>
+              <div class="detail-block">
+                <strong>Detail Layanan:</strong>
+                {% if acara.layanan_list %}
+                  <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">
+                    {% for layanan in acara.layanan_list %}
+                      <div class="anggota-item" style="max-width:520px;">
+                        <span class="badge">{{ layanan.ikon() }} {{ layanan.nama_layanan }}</span>
+                        <div style="margin-top:6px; font-size:0.82rem;">
+                          <strong>Petugas:</strong> {{ layanan.petugas | join(', ') if layanan.petugas else 'Belum ditentukan' }}
+                        </div>
+                        <div style="font-size:0.82rem;">
+                          <strong>Alat:</strong> {{ layanan.alat | join(', ') if layanan.alat else 'Belum ditentukan' }}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <span style="color:#999;">Belum ada layanan tercatat.</span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4" style="text-align:center; color:#999;">Belum ada riwayat acara.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".acara-row").forEach(function (row) {
+      row.addEventListener("click", function () {
+        var target = document.getElementById(row.dataset.target);
+        var isOpen = target.classList.contains("open");
+        row.classList.toggle("open", !isOpen);
+        target.classList.toggle("open", !isOpen);
+      });
+    });
+  });
+</script>
+{% endblock %}
